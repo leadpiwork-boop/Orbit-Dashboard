@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROJECT ORBIT — Operational Results &amp; Business Intelligence Tracker</title>
+  <meta name="description" content="PROJECT ORBIT — Operational Results &amp; Business Intelligence Tracker. Real-time productivity and quality metrics." />
+  <link rel="stylesheet" href="orbit.css" />
+  <!-- ── ORBIT runtime configuration ─────────────────────────────────────────
+       Edit flags here to control optional behaviours without touching app logic.
+       staleBannerEnabled : true  = show stale/local-copy warning (production default)
+                            false = suppress banner (use during admin maintenance / dev)
+  ──────────────────────────────────────────────────────────────────────────── -->
+  <script>
+  window.ORBIT_CONFIG = {
+    staleBannerEnabled: true   // set to false to suppress the stale-copy warning banner
+  };
+  </script>
+</head>
+<body>
+<div class="orbit-shell">
+
+  <!-- ── Loading overlay ─────────────────────────────────── -->
+  <div class="orbit-loading" id="orbit-loading" role="status" aria-live="polite">
+    <div class="orbit-spinner"></div>
+    <div class="orbit-loading__text">Loading ORBIT&hellip;</div>
+  </div>
+
+  <!-- ── Header ───────────────────────────────────────────── -->
+  <header class="orbit-header" role="banner">
+    <div class="orbit-header__left">
+
+      <!-- ORBIT Symbol SVG — inline for crisp rendering at any DPI -->
+      <div class="orbit-header__logo" aria-label="ORBIT logo" role="img">
+        <svg class="orbit-header__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="h-ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%"   stop-color="#5C00BD"/>
+              <stop offset="50%"  stop-color="#8271FA"/>
+              <stop offset="100%" stop-color="#44B8F3"/>
+            </linearGradient>
+            <linearGradient id="h-orbitGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#44B8F3"/>
+              <stop offset="50%"  stop-color="#8271FA"/>
+              <stop offset="100%" stop-color="#5C00BD"/>
+            </linearGradient>
+            <radialGradient id="h-sphereGrad" cx="38%" cy="32%" r="62%">
+              <stop offset="0%"   stop-color="#9B6EF5"/>
+              <stop offset="45%"  stop-color="#6A1FD4"/>
+              <stop offset="100%" stop-color="#3A0080"/>
+            </radialGradient>
+            <linearGradient id="h-barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%"   stop-color="#00BCBB"/>
+              <stop offset="100%" stop-color="#44B8F3"/>
+            </linearGradient>
+            <linearGradient id="h-tealArc" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#44B8F3"/>
+              <stop offset="100%" stop-color="#00BCBB"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Outer main ring -->
+          <path d="M 100 8 A 92 92 0 1 1 30 162"
+                stroke="url(#h-ringGrad)" stroke-width="13" stroke-linecap="round" fill="none" opacity="0.92"/>
+          <!-- Teal lower arc -->
+          <path d="M 30 162 A 92 92 0 0 0 172 155"
+                stroke="url(#h-tealArc)" stroke-width="13" stroke-linecap="round" fill="none" opacity="0.95"/>
+          <!-- Dashed cyan inner speedometer arc -->
+          <path d="M 100 22 A 78 78 0 0 1 168 130"
+                stroke="#44B8F3" stroke-width="5" stroke-linecap="round"
+                stroke-dasharray="9 7" fill="none" opacity="0.85"/>
+          <!-- Dashed purple lower arc -->
+          <path d="M 35 148 A 78 78 0 0 1 100 22"
+                stroke="#8271FA" stroke-width="4" stroke-linecap="round"
+                stroke-dasharray="7 9" fill="none" opacity="0.55"/>
+          <!-- Orbital ring ellipse (diagonal sweep) -->
+          <ellipse cx="100" cy="108" rx="80" ry="22"
+                   transform="rotate(-30 100 108)"
+                   stroke="url(#h-orbitGrad)" stroke-width="5" fill="none" opacity="0.88"/>
+          <!-- Planet sphere -->
+          <circle cx="100" cy="100" r="30" fill="url(#h-sphereGrad)"/>
+          <ellipse cx="91" cy="89" rx="9" ry="6"
+                   fill="white" opacity="0.18" transform="rotate(-20 91 89)"/>
+          <!-- Orbital node dot -->
+          <circle cx="158" cy="80" r="8" fill="#5C00BD"/>
+          <circle cx="158" cy="80" r="5" fill="#8271FA"/>
+          <circle cx="156" cy="78" r="2" fill="white" opacity="0.5"/>
+          <!-- Analytics bar chart -->
+          <rect x="108" y="148" width="9"  height="18" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <rect x="120" y="138" width="9"  height="28" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <rect x="132" y="128" width="9"  height="38" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <rect x="144" y="116" width="9"  height="50" rx="2" fill="url(#h-barGrad)" opacity="0.95"/>
+          <!-- Bar sheens -->
+          <rect x="108" y="148" width="4"  height="18" rx="2" fill="white" opacity="0.12"/>
+          <rect x="120" y="138" width="4"  height="28" rx="2" fill="white" opacity="0.12"/>
+          <rect x="132" y="128" width="4"  height="38" rx="2" fill="white" opacity="0.12"/>
+          <rect x="144" y="116" width="4"  height="50" rx="2" fill="white" opacity="0.12"/>
+        </svg>
+      </div>
+
+      <!-- Vertical divider -->
+      <div class="orbit-header__divider" aria-hidden="true"></div>
+
+      <!-- Text lockup -->
+      <div class="orbit-header__titles">
+        <div class="orbit-header__eyebrow">PROJECT</div>
+        <div class="orbit-header__title">ORBIT</div>
+        <div class="orbit-header__subtitle">Operational Results &amp; Business Intelligence Tracker</div>
+      </div>
+    </div>
+
+    <div class="orbit-header__right">
+
+      <!-- Carelon Global Solutions — corporate sponsor, official PNG asset -->
+      <div class="orbit-header__carelon" role="img" aria-label="Carelon Global Solutions">
+        <img src="assets/logos/carelon.png"
+             alt="Carelon Global Solutions"
+             class="orbit-header__carelon-img" />
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ── Filters ──────────────────────────────────────────── -->
+  <nav class="orbit-filters" role="navigation" aria-label="Dashboard filters">
+
+    <!-- Timeline: Month pills -->
+    <div class="orbit-filters__group">
+      <span class="orbit-filters__label">Timeline</span>
+      <div class="orbit-filters__pills" id="month-pills" role="group" aria-label="Filter by month">
+        <!-- Built dynamically by orbit-app.js -->
+      </div>
+    </div>
+
+    <!-- Manager dropdown — sourced from Fact_Productivity (period-aware) -->
+    <div class="orbit-filters__group">
+      <span class="orbit-filters__label" data-tooltip="Manager as recorded in Fact_Productivity for the selected period">Manager</span>
+      <div class="orbit-filters__select-wrap">
+        <select class="orbit-select" id="manager-select" aria-label="Filter by manager">
+          <option value="all">All Managers</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Right-aligned controls: sign-in + refresh timestamp -->
+    <div class="orbit-filters__controls">
+      <button class="orbit-auth-chip" id="orbit-auth-chip" type="button"
+              aria-haspopup="dialog" aria-label="Leadership sign in">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span id="orbit-auth-chip-label">Leadership Sign-In</span>
+      </button>
+      <div class="orbit-filters__updated">
+        <span id="last-updated">Live</span>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- ── Page navigation tabs ─────────────────────────────── -->
+  <nav class="orbit-page-nav" role="tablist" aria-label="Dashboard pages">
+    <button class="orbit-page-tab is-active" role="tab" aria-selected="true"
+            aria-controls="page-overview" id="tab-overview" data-page="overview">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="8" width="4" height="7" rx="1" fill="currentColor" opacity=".7"/>
+        <rect x="6" y="4" width="4" height="11" rx="1" fill="currentColor"/>
+        <rect x="11" y="1" width="4" height="14" rx="1" fill="currentColor" opacity=".85"/>
+      </svg>
+      Overview
+    </button>
+    <button class="orbit-page-tab" role="tab" aria-selected="false"
+            aria-controls="page-daily" id="tab-daily" data-page="daily">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="14" height="2" rx="1" fill="currentColor" opacity=".5"/>
+        <rect x="1" y="5" width="14" height="2" rx="1" fill="currentColor" opacity=".75"/>
+        <rect x="1" y="9" width="10" height="2" rx="1" fill="currentColor"/>
+        <rect x="1" y="13" width="7"  height="2" rx="1" fill="currentColor" opacity=".6"/>
+      </svg>
+      Daily Detail
+    </button>
+    <button class="orbit-page-tab" role="tab" aria-selected="false"
+            aria-controls="page-monthly" id="tab-monthly" data-page="monthly">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.4" fill="none"/>
+        <rect x="4" y="4" width="3" height="3" rx=".5" fill="currentColor" opacity=".5"/>
+        <rect x="9" y="4" width="3" height="3" rx=".5" fill="currentColor" opacity=".85"/>
+        <rect x="4" y="9" width="3" height="3" rx=".5" fill="currentColor"/>
+        <rect x="9" y="9" width="3" height="3" rx=".5" fill="currentColor" opacity=".65"/>
+      </svg>
+      Monthly Performance
+    </button>
+    <button class="orbit-page-tab is-hidden" role="tab" aria-selected="false"
+            aria-controls="page-leadership" id="tab-leadership" data-page="leadership">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.3l-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="currentColor" opacity=".85"/>
+      </svg>
+      Leadership Portal
+    </button>
+  </nav>
+
+  <!-- ── Main content ─────────────────────────────────────── -->
+  <main class="orbit-content" role="main">
+
+  <!-- ══ PAGE: Overview ═══════════════════════════════════ -->
+  <div id="page-overview" class="orbit-page" role="tabpanel" aria-labelledby="tab-overview">
+
+    <!-- ── KPI Cards ──────────────────────────────────────── -->
+    <section class="orbit-kpis" aria-label="Key performance indicators">
+
+      <article class="kpi-card kpi-card--production" data-tt-title="Actual Production" data-tt-body="Total units produced in the selected period, aggregated across all filtered associates.">
+        <div class="kpi-label">Actual Production</div>
+        <div class="kpi-value" id="kpi-actual">—</div>
+        <div class="kpi-sub" id="kpi-actual-sub">Total output</div>
+      </article>
+
+      <article class="kpi-card kpi-card--target" data-tt-title="Production Target" data-tt-body="Sum of individual production targets for the selected period and filters.">
+        <div class="kpi-label">Production Target</div>
+        <div class="kpi-value" id="kpi-target">—</div>
+        <div class="kpi-sub" id="kpi-target-sub">Aggregate target</div>
+      </article>
+
+      <article class="kpi-card kpi-card--pct" data-tt-title="Productivity %" data-tt-body="Total actual production ÷ total target, blended across all filtered associates. PASS when ≥ 100%.">
+        <div class="kpi-label">Productivity %</div>
+        <div class="kpi-value" id="kpi-pct">—</div>
+        <div class="kpi-sub" id="kpi-pct-sub">vs target</div>
+      </article>
+
+      <!-- Enterprise Target & Variance: Leadership Portal → Summary KPI strip (below) -->
+
+      <article class="kpi-card kpi-card--qa-score" data-tt-title="Average QA Score" data-tt-body="Weighted average QA score across all audits. PI passing threshold: 98.50% — scores below are FAIL.">
+        <div class="kpi-label">Average QA Score</div>
+        <div class="kpi-value" id="kpi-qa-score">—</div>
+        <div class="kpi-sub" id="kpi-qa-score-sub">No audit data</div>
+      </article>
+
+      <article class="kpi-card kpi-card--qa-count" data-tt-title="QA Audit Count" data-tt-body="Total number of QA audit transactions in the selected period.">
+        <div class="kpi-label">QA Audit Count</div>
+        <div class="kpi-value" id="kpi-qa-count">—</div>
+        <div class="kpi-sub">Total transactions</div>
+      </article>
+
+      <article class="kpi-card kpi-card--audited" data-tt-title="Associates Audited" data-tt-body="Distinct associates who received at least one QA audit in the selected period.">
+        <div class="kpi-label">Associates Audited</div>
+        <div class="kpi-value" id="kpi-audited">—</div>
+        <div class="kpi-sub">Unique associates</div>
+      </article>
+
+    </section>
+
+    <!-- ── Charts ─────────────────────────────────────────── -->
+    <section class="orbit-charts" aria-label="Visual analytics">
+
+      <!-- Hero chart: Weekly Actual vs Target -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-header__left">
+            <div class="chart-title">Weekly Actual vs Target Trend</div>
+            <div class="chart-subtitle">Aggregated weekly production by all associates</div>
+          </div>
+          <span class="chart-period-badge" aria-live="polite">All Months · All Managers</span>
+        </div>
+        <div class="chart-body" role="img" aria-label="Line chart showing weekly actual production versus target">
+          <canvas id="chart-trend"></canvas>
+        </div>
+        <div class="chart-legend" aria-hidden="true">
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--actual"></span>Actual Production</div>
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--target"></span>Production Target</div>
+        </div>
+      </div>
+
+      <!-- Secondary chart: QA Overview -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-header__left">
+            <div class="chart-title">QA Overview</div>
+            <div class="chart-subtitle">Monthly audit count &amp; average score</div>
+          </div>
+          <span class="chart-period-badge" aria-live="polite">All Months · All Managers</span>
+        </div>
+        <div class="chart-body" role="img" aria-label="Bar and line chart showing QA audit counts and average scores by month">
+          <canvas id="chart-qa"></canvas>
+        </div>
+        <div class="chart-legend" aria-hidden="true">
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--actual"></span>Audit Count</div>
+          <div class="chart-legend__item"><span class="chart-legend__dot chart-legend__dot--qa"></span>Avg Score %</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── Associate Detail Table ─────────────────────────── -->
+    <section class="orbit-table-section" aria-label="Associate detail table">
+      <div class="table-card">
+        <div class="table-card__header">
+          <div>
+            <div class="table-card__title">Associate Detail</div>
+            <div class="table-card__meta" id="table-meta">Loading&hellip;</div>
+          </div>
+          <div class="table-card__actions">
+            <input
+              id="table-search"
+              type="search"
+              placeholder="Search associate&hellip;"
+              aria-label="Search associates"
+              style="
+                background:var(--glass-bg);border:1px solid var(--glass-border);
+                border-radius:var(--radius-sm);color:var(--text);font-size:.73rem;
+                padding:5px 10px;outline:none;width:180px;
+              "
+            />
+            <button class="table-action-btn" onclick="window.print()" aria-label="Print table">
+              &#128438; Print
+            </button>
+          </div>
+        </div>
+        <div class="table-scroll-wrap" role="region" aria-label="Scrollable data table" tabindex="0">
+          <table class="orbit-table" aria-label="Associate productivity and quality data">
+            <thead>
+              <tr>
+                <th aria-label="Rank">#</th>
+                <th data-sort="name"     class="is-sortable">Associate</th>
+                <th data-sort="manager"  class="is-sortable" data-tooltip="Manager from Fact_Productivity — period-aware">Manager</th>
+                <th data-sort="act"      class="is-sortable" style="text-align:right">Prod Actual</th>
+                <th data-sort="tgt"      class="is-sortable" style="text-align:right">Prod Target</th>
+                <th data-sort="variance" class="is-sortable" style="text-align:right">Variance</th>
+                <th data-sort="prodPct"  class="is-sortable">Productivity %</th>
+                <th data-sort="qaCnt"    class="is-sortable" style="text-align:right">QA Audits</th>
+                <th data-sort="avgQA"    class="is-sortable" style="text-align:right">QA Score %</th>
+              </tr>
+            </thead>
+            <tbody id="assoc-tbody">
+              <tr><td colspan="9">
+                <div class="orbit-empty">
+                  <div class="orbit-empty__title">Loading data&hellip;</div>
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.orbit-page#page-overview -->
+
+  <!-- ══ PAGE: Daily Detail ════════════════════════════════ -->
+  <div id="page-daily" class="orbit-page is-hidden" role="tabpanel" aria-labelledby="tab-daily">
+
+    <!-- Daily Detail filters -->
+    <div class="orbit-dd-filters">
+
+      <!-- Month pills (synced with Overview timeline) -->
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Timeline</span>
+        <div class="orbit-filters__pills" id="dd-month-pills" role="group" aria-label="Filter daily detail by month"></div>
+      </div>
+
+      <!-- Date filter — narrows to a single calendar day within the selected month -->
+      <div class="orbit-filters__group orbit-filters__group--date" id="dd-date-group">
+        <span class="orbit-filters__label">Date</span>
+        <div class="orbit-filters__select-wrap dd-date-wrap">
+          <input class="orbit-select dd-date-input" id="dd-date-input"
+                 type="date" aria-label="Filter by exact date" />
+          <button class="dd-date-clear is-hidden" id="dd-date-clear"
+                  type="button" title="Clear date filter" aria-label="Clear date filter">&#x2715;</button>
+        </div>
+      </div>
+
+      <!-- Manager dropdown -->
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Manager</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="dd-manager-select" aria-label="Filter by manager">
+            <option value="all">All Managers</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Associate dropdown -->
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Associate</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="dd-assoc-select" aria-label="Filter by associate">
+            <option value="all">All Associates</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Search box -->
+      <div class="orbit-filters__group orbit-filters__group--search">
+        <span class="orbit-filters__label">Search</span>
+        <div class="orbit-filters__select-wrap">
+          <input class="orbit-select orbit-dd-search" id="dd-search"
+                 type="search" placeholder="Search associate, manager…"
+                 aria-label="Search daily detail table" autocomplete="off" />
+        </div>
+      </div>
+
+    </div><!-- /.orbit-dd-filters -->
+
+    <!-- Daily Detail table card -->
+    <div class="table-card orbit-dd-card">
+      <div class="table-card__header">
+        <div class="table-card__title">Daily Detail</div>
+        <div class="table-card__meta" id="dd-meta">Loading&hellip;</div>
+        <div class="table-card__actions">
+          <button class="orbit-btn orbit-btn--ghost" id="dd-export-btn"
+                  title="Export to CSV" aria-label="Export daily detail to CSV">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1v9M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12h12v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2z" fill="currentColor" opacity=".35"/>
+            </svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+      <div class="table-card__body">
+        <table class="orbit-table" id="dd-table" role="grid" aria-label="Daily production detail">
+          <thead>
+            <tr>
+              <th class="col-date"  data-dd-sort="d"       aria-sort="none">Date</th>
+              <th class="col-associate" data-dd-sort="a"   aria-sort="none">Associate</th>
+              <th class="col-manager"   data-dd-sort="m"   aria-sort="none">Manager</th>
+              <th class="col-num"   data-dd-sort="act"     aria-sort="none">Actual</th>
+              <th class="col-num"   data-dd-sort="tgt"     aria-sort="none">Target</th>
+              <th class="col-num"   data-dd-sort="variance" aria-sort="none">Variance</th>
+              <th class="col-num"   data-dd-sort="w"       aria-sort="none">Week</th>
+              <th class="col-num"   data-dd-sort="ym"      aria-sort="none">Month</th>
+            </tr>
+          </thead>
+          <tbody id="dd-tbody">
+            <!-- Built by orbit-app.js DD.render() — first 200 rows -->
+          </tbody>
+        </table>
+      </div>
+      <!-- Load more — appears when filtered results exceed one page -->
+      <div class="dd-load-more-wrap">
+        <button class="orbit-btn orbit-btn--ghost dd-load-more-btn is-hidden" id="dd-load-more" type="button">
+          Load more records
+        </button>
+      </div>
+    </div><!-- /.orbit-dd-card -->
+
+  </div><!-- /.orbit-page#page-daily -->
+
+  <!-- ══ PAGE: Monthly Performance ════════════════════════════ -->
+  <div id="page-monthly" class="orbit-page is-hidden" role="tabpanel" aria-labelledby="tab-monthly">
+
+    <!-- Monthly filters -->
+    <div class="orbit-dd-filters mp-filters">
+
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Timeline</span>
+        <div class="orbit-filters__pills" id="mp-month-pills" role="group" aria-label="Filter by month"></div>
+      </div>
+
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Manager</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="mp-manager-select" aria-label="Filter by manager">
+            <option value="all">All Managers</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="orbit-filters__group">
+        <span class="orbit-filters__label">Associate</span>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="mp-assoc-select" aria-label="Filter by associate">
+            <option value="all">All Associates</option>
+          </select>
+        </div>
+      </div>
+
+    </div><!-- /.mp-filters -->
+
+    <!-- ── Summary KPI cards ───────────────────────────────── -->
+    <section class="orbit-kpis mp-kpis" aria-label="Monthly performance summary">
+
+      <article class="kpi-card kpi-card--mp-pass"
+               data-tt-title="Associates Passing" data-tt-body="Associates whose productivity is at or above the 100% target.<br><br>PASS: Productivity ≥ 100%">
+        <div class="kpi-label">Associates Passing</div>
+        <div class="kpi-value" id="mp-kpi-passing">—</div>
+        <div class="kpi-sub" id="mp-kpi-passing-sub">Productivity &ge; 100%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--mp-fail"
+               data-tt-title="Associates Failing" data-tt-body="Associates whose productivity is below the 100% target.<br><br>FAIL: Productivity &lt; 100%">
+        <div class="kpi-label">Associates Failing</div>
+        <div class="kpi-value" id="mp-kpi-failing">—</div>
+        <div class="kpi-sub" id="mp-kpi-failing-sub">Productivity &lt; 100%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--pct"
+               data-tt-title="Avg Productivity %" data-tt-body="Mean productivity percentage across all filtered associates and months.<br><br>PASS: ≥ 100% &nbsp;|&nbsp; FAIL: &lt; 100%">
+        <div class="kpi-label">Avg Productivity %</div>
+        <div class="kpi-value" id="mp-kpi-avg-prod">—</div>
+        <div class="kpi-sub" id="mp-kpi-avg-prod-sub">vs 100% target</div>
+      </article>
+
+      <article class="kpi-card kpi-card--qa-score"
+               data-tt-title="Avg QA Score %" data-tt-body="Weighted average QA score across the selected period.<br><br>PASS: ≥ 98.50% &nbsp;|&nbsp; FAIL: &lt; 98.50%">
+        <div class="kpi-label">Avg QA Score %</div>
+        <div class="kpi-value" id="mp-kpi-avg-qa">—</div>
+        <div class="kpi-sub" id="mp-kpi-avg-qa-sub">Threshold: 98.50%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--mp-qa-pass"
+               data-tt-title="QA Pass Count" data-tt-body="Associates whose QA score meets the PI passing threshold.<br><br>PASS: QA Score ≥ 98.50%">
+        <div class="kpi-label">QA Pass Count</div>
+        <div class="kpi-value" id="mp-kpi-qa-pass">—</div>
+        <div class="kpi-sub">QA Score &ge; 98.50%</div>
+      </article>
+
+      <article class="kpi-card kpi-card--mp-qa-fail"
+               data-tt-title="QA Fail Count" data-tt-body="Associates whose QA score falls below the PI passing threshold.<br><br>FAIL: QA Score &lt; 98.50%">
+        <div class="kpi-label">QA Fail Count</div>
+        <div class="kpi-value" id="mp-kpi-qa-fail">—</div>
+        <div class="kpi-sub">QA Score &lt; 98.50%</div>
+      </article>
+
+    </section><!-- /.mp-kpis -->
+
+    <!-- ── Monthly trend charts ─────────────────────────────── -->
+    <div class="mp-charts">
+
+      <!-- Chart 1: Productivity Trend -->
+      <div class="chart-card mp-chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__title">Monthly Productivity Trend</div>
+          <div class="chart-card__legend">
+            <span class="chart-legend-item chart-legend-item--pass">&#9632; Pass (&ge;100%)</span>
+            <span class="chart-legend-item chart-legend-item--fail">&#9632; Fail (&lt;100%)</span>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          <canvas id="mp-chart-prod" aria-label="Monthly productivity trend chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: QA Score Trend -->
+      <div class="chart-card mp-chart-card">
+        <div class="chart-card__header">
+          <div class="chart-card__title">Monthly QA Score Trend</div>
+          <div class="chart-card__legend">
+            <span class="chart-legend-item chart-legend-item--pass">&#9632; Pass (&ge;98.5%)</span>
+            <span class="chart-legend-item chart-legend-item--fail">&#9632; Fail (&lt;98.5%)</span>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          <canvas id="mp-chart-qa" aria-label="Monthly QA score trend chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 3: Pass/Fail Distribution -->
+      <div class="chart-card mp-chart-card mp-chart-card--dist">
+        <div class="chart-card__header">
+          <div class="chart-card__title">Pass / Fail Distribution</div>
+        </div>
+        <div class="chart-card__body mp-dist-body">
+          <canvas id="mp-chart-dist" aria-label="Pass/fail distribution chart"></canvas>
+        </div>
+      </div>
+
+    </div><!-- /.mp-charts -->
+
+    <!-- ── Associate Performance Grid ──────────────────────── -->
+    <div class="table-card mp-grid-card">
+      <div class="table-card__header">
+        <div class="table-card__title">Associate Performance Grid</div>
+        <div class="table-card__meta" id="mp-grid-meta">Loading&hellip;</div>
+        <div class="table-card__actions">
+          <div class="mp-legend-inline">
+            <span class="qa-badge qa-badge--pass">● PROD PASS</span>
+            <span class="qa-badge qa-badge--fail">● PROD FAIL</span>
+            <span class="mp-qa-pass-badge">&#9670; QA PASS</span>
+            <span class="mp-qa-fail-badge">&#9670; QA FAIL</span>
+          </div>
+        </div>
+      </div>
+      <div class="table-card__body mp-grid-scroll">
+        <table class="orbit-table mp-grid-table" id="mp-grid-table" role="grid"
+               aria-label="Associate monthly performance grid">
+          <thead id="mp-grid-thead">
+            <!-- Built dynamically: Associate | Manager | [month cols…] -->
+          </thead>
+          <tbody id="mp-grid-tbody">
+            <!-- Built dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /.mp-grid-card -->
+
+    <!-- ── Monthly Detail trend table ──────────────────────── -->
+    <div class="table-card mp-detail-card">
+      <div class="table-card__header">
+        <div class="table-card__title">Monthly Performance Trend</div>
+        <div class="table-card__meta" id="mp-detail-meta"></div>
+        <div class="table-card__actions">
+          <button class="orbit-btn orbit-btn--ghost" id="mp-export-btn"
+                  title="Export to CSV" aria-label="Export monthly detail to CSV">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1v9M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12h12v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2z" fill="currentColor" opacity=".35"/>
+            </svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+      <div class="table-card__body">
+        <table class="orbit-table" id="mp-detail-table" role="grid"
+               aria-label="Monthly performance detail table">
+          <thead>
+            <tr>
+              <th data-mp-sort="ym"      class="col-num">Month</th>
+              <th data-mp-sort="a"       class="col-associate">Associate</th>
+              <th data-mp-sort="m"       class="col-manager">Manager</th>
+              <th data-mp-sort="act"     class="col-num">Actual</th>
+              <th data-mp-sort="tgt"     class="col-num">Target</th>
+              <th data-mp-sort="prodPct" class="col-num">Prod %</th>
+              <th data-mp-sort="avgQA"   class="col-num">QA Score</th>
+              <th class="col-num">Prod Status</th>
+              <th class="col-num">QA Status</th>
+            </tr>
+          </thead>
+          <tbody id="mp-detail-tbody">
+            <!-- Built dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /.mp-detail-card -->
+
+  </div><!-- /.orbit-page#page-monthly -->
+
+  <!-- ══ PAGE: Leadership Portal ═══════════════════════════ -->
+  <div id="page-leadership" class="orbit-page is-hidden" role="tabpanel" aria-labelledby="tab-leadership">
+
+    <!-- Portal header + role context -->
+    <div class="lp-hero">
+      <div>
+        <div class="lp-hero__title">Leadership Portal</div>
+        <div class="lp-hero__sub">Restricted access &mdash; Payment Integrity leadership tools</div>
+      </div>
+      <div class="lp-hero__role" id="lp-role-badge">—</div>
+    </div>
+
+    <!-- Portal sub-navigation -->
+    <nav class="lp-subnav" role="tablist" aria-label="Leadership sections">
+      <button class="lp-subnav__tab is-active" data-lp-sub="summary" type="button" role="tab" aria-selected="true">Summary</button>
+      <button class="lp-subnav__tab" data-lp-sub="alerts" type="button" role="tab" aria-selected="false">Executive Alerts</button>
+      <button class="lp-subnav__tab" data-lp-sub="pip" type="button" role="tab" aria-selected="false">PIP Watchlist</button>
+      <button class="lp-subnav__tab" data-lp-sub="rec" type="button" role="tab" aria-selected="false">Recognition</button>
+      <button class="lp-subnav__tab" data-lp-sub="managers" type="button" role="tab" aria-selected="false">Managers</button>
+      <button class="lp-subnav__tab" data-lp-sub="notes" type="button" role="tab" aria-selected="false">Notifications</button>
+      <button class="lp-subnav__tab" data-lp-sub="matrix" type="button" role="tab" aria-selected="false">Performance Matrix</button>
+      <button class="lp-subnav__tab lp-subnav__tab--records" data-lp-sub="ar" type="button" role="tab" aria-selected="false">Associate Records</button>
+      <button class="lp-subnav__tab lp-subnav__tab--mynotes" data-lp-sub="mynotes" type="button" role="tab" aria-selected="false">
+        My Notes<span class="mn-tab-badge is-hidden" id="mn-tab-badge" aria-label="overdue tasks"></span>
+      </button>
+    </nav>
+
+    <!-- ══ SUB-PAGE: Summary ══ -->
+    <div class="lp-subpage" data-lp-subpage="summary">
+
+    <!-- KPI strip -->
+    <section class="orbit-kpis" aria-label="Leadership summary">
+      <!-- Enterprise planning metrics — Leadership/Admin only -->
+      <article class="kpi-card kpi-card--ent-target" data-tt-title="Enterprise Target" data-tt-body="Monthly enterprise production target: standard rate × approved headcount × business days in the selected month. Requires a single month to be selected.">
+        <div class="kpi-label">Enterprise Target</div>
+        <div class="kpi-value" id="kpi-ent-target">—</div>
+        <div class="kpi-sub" id="kpi-ent-target-sub">Select a single month</div>
+      </article>
+      <article class="kpi-card kpi-card--ent-variance" data-tt-title="Enterprise Variance" data-tt-body="Actual enterprise production minus Enterprise Target for the selected month. Positive = above plan; negative = below plan.">
+        <div class="kpi-label">Enterprise Variance</div>
+        <div class="kpi-value" id="kpi-ent-variance">—</div>
+        <div class="kpi-sub" id="kpi-ent-variance-sub">Select a single month</div>
+      </article>
+      <article class="kpi-card" data-tt-title="PIP Candidates" data-tt-body="Associates failing productivity (<100%) or QA (<98.50%) for 2 consecutive months.">
+        <div class="kpi-label">PIP Candidates</div>
+        <div class="kpi-value" id="lp-kpi-pip">—</div>
+        <div class="kpi-sub">2-month consecutive fails</div>
+      </article>
+      <article class="kpi-card" data-tt-title="Recognition Candidates" data-tt-body="Associates at productivity >=110% or QA = 100.00% for 3 consecutive months.">
+        <div class="kpi-label">Recognition Candidates</div>
+        <div class="kpi-value" id="lp-kpi-rec">—</div>
+        <div class="kpi-sub">3-month high performers</div>
+      </article>
+      <article class="kpi-card" data-tt-title="High Alerts" data-tt-body="HIGH severity items in Executive Alerts — dual fails and managers with multiple PIP cases.">
+        <div class="kpi-label">High Alerts</div>
+        <div class="kpi-value" id="lp-kpi-alerts">—</div>
+        <div class="kpi-sub">Immediate attention</div>
+      </article>
+      <article class="kpi-card" data-tt-title="Managers Below Target" data-tt-body="Managers whose blended productivity or QA is below the approved standard.">
+        <div class="kpi-label">Managers Below Target</div>
+        <div class="kpi-value" id="lp-kpi-mgrbelow">—</div>
+        <div class="kpi-sub">Blended metrics</div>
+      </article>
+      <article class="kpi-card" data-tt-title="Pending Notifications" data-tt-body="Outlook-ready draft emails generated for leadership review. Not sent automatically.">
+        <div class="kpi-label">Notifications</div>
+        <div class="kpi-value" id="lp-kpi-notes">—</div>
+        <div class="kpi-sub">Drafts generated</div>
+      </article>
+    </section>
+
+    <!-- Quick-action tiles -->
+    <div class="lp-tiles" aria-label="Quick actions">
+      <button class="lp-tile" data-lp-goto="pip" type="button">
+        <span class="lp-tile__count" id="lp-tile-pip">—</span>
+        <span class="lp-tile__label">PIP Watchlist</span>
+        <span class="lp-tile__sub">Consecutive failures</span>
+      </button>
+      <button class="lp-tile lp-tile--rec" data-lp-goto="rec" type="button">
+        <span class="lp-tile__count" id="lp-tile-rec">—</span>
+        <span class="lp-tile__label">Recognition Watchlist</span>
+        <span class="lp-tile__sub">Sustained excellence</span>
+      </button>
+      <button class="lp-tile lp-tile--mgr" data-lp-goto="managers" type="button">
+        <span class="lp-tile__count" id="lp-tile-mgr">—</span>
+        <span class="lp-tile__label">Manager Scorecard</span>
+        <span class="lp-tile__sub">Team-level analytics</span>
+      </button>
+      <button class="lp-tile lp-tile--alert" data-lp-goto="alerts" type="button">
+        <span class="lp-tile__count" id="lp-tile-alerts">—</span>
+        <span class="lp-tile__label">Executive Alerts</span>
+        <span class="lp-tile__sub">Severity-ranked</span>
+      </button>
+      <button class="lp-tile lp-tile--notes" data-lp-goto="notes" type="button">
+        <span class="lp-tile__count" id="lp-tile-notes">—</span>
+        <span class="lp-tile__label">Notification Center</span>
+        <span class="lp-tile__sub">Outlook Web drafts</span>
+      </button>
+      <button class="lp-tile lp-tile--matrix" data-lp-goto="matrix" type="button">
+        <span class="lp-tile__count" id="lp-tile-matrix">—</span>
+        <span class="lp-tile__label">Performance Matrix</span>
+        <span class="lp-tile__sub">Quarterly quadrant view</span>
+      </button>
+      <button class="lp-tile lp-tile--ar" data-lp-goto="ar" type="button">
+        <span class="lp-tile__count" id="lp-tile-ar">—</span>
+        <span class="lp-tile__label">Associate Records</span>
+        <span class="lp-tile__sub">Merits &amp; Demerits</span>
+      </button>
+    </div>
+
+    <!-- Business Rules — thresholds driving the watchlists -->
+    <div class="orbit-table-section lp-section">
+      <div class="lp-section__head">
+        <h2 class="lp-section__title">Business Rules</h2>
+        <span class="lp-section__rule">Thresholds applied to watchlists &amp; notifications</span>
+      </div>
+      <div class="orbit-table-wrap">
+        <table class="orbit-table lp-table" aria-label="Business rules">
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th class="col-num">Value</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="lp-rules-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    </div><!-- /.lp-subpage[data-lp-subpage=summary] -->
+
+    <!-- ══ SUB-PAGE: Managers ══ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="managers">
+
+    <!-- Manager Scorecard -->
+    <div class="orbit-table-section lp-section">
+      <div class="lp-section__head">
+        <h2 class="lp-section__title">Manager Scorecard</h2>
+        <span class="lp-section__rule">Per-manager aggregates across all months &mdash; sorted by productivity</span>
+      </div>
+      <div class="orbit-table-wrap">
+        <table class="orbit-table lp-table" aria-label="Manager scorecard">
+          <thead>
+            <tr>
+              <th class="col-manager">Manager</th>
+              <th class="col-num">Associates</th>
+              <th class="col-num">Avg Productivity</th>
+              <th class="col-num">Avg QA</th>
+              <th class="col-num">Prod Pass Rate</th>
+              <th class="col-num">QA Pass Rate</th>
+              <th class="col-num">PIP</th>
+              <th class="col-num">Recognition</th>
+            </tr>
+          </thead>
+          <tbody id="lp-score-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    </div><!-- /.lp-subpage[data-lp-subpage=managers] -->
+
+    <!-- ══ SUB-PAGE: Executive Alerts ══ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="alerts">
+    <!-- Executive Alerts -->
+    <div class="orbit-table-section lp-section">
+      <div class="lp-section__head">
+        <h2 class="lp-section__title">Executive Alerts</h2>
+        <span class="lp-section__rule">High-signal items for leadership attention &mdash; sorted by severity</span>
+      </div>
+      <div class="lp-alerts" id="lp-alerts"></div>
+    </div>
+    </div><!-- /.lp-subpage[data-lp-subpage=alerts] -->
+
+    <!-- ══ SUB-PAGE: PIP Watchlist ══ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="pip">
+    <!-- PIP Watchlist -->
+    <div class="orbit-table-section lp-section">
+      <div class="lp-section__head">
+        <h2 class="lp-section__title">PIP Watchlist</h2>
+        <span class="lp-section__rule">Productivity &lt; 100% or QA &lt; 98.50% for 2 consecutive months</span>
+      </div>
+      <div class="lp-filters" aria-label="PIP watchlist filters">
+        <div class="lp-filters__pills" id="lp-pip-pills">
+          <button class="orbit-pill is-active" data-pip-reason="all" type="button">All</button>
+          <button class="orbit-pill" data-pip-reason="dual" type="button">Dual Fail</button>
+          <button class="orbit-pill" data-pip-reason="prod" type="button">Productivity Fail</button>
+          <button class="orbit-pill" data-pip-reason="qa" type="button">QA Fail</button>
+        </div>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="lp-pip-manager" aria-label="Filter PIP watchlist by manager">
+            <option value="all">All Managers</option>
+          </select>
+        </div>
+        <input class="orbit-input lp-search" id="lp-pip-search" type="search"
+               placeholder="Search associate&hellip;" aria-label="Search PIP watchlist by associate" />
+      </div>
+      <div class="orbit-table-wrap">
+        <table class="orbit-table lp-table" aria-label="PIP watchlist">
+          <thead>
+            <tr>
+              <th class="col-associate">Associate</th>
+              <th class="col-manager">Manager</th>
+              <th>LOB</th>
+              <th class="col-num">Month 1 Result</th>
+              <th class="col-num">Month 2 Result</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="lp-pip-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    </div><!-- /.lp-subpage[data-lp-subpage=pip] -->
+
+    <!-- ══ SUB-PAGE: Recognition Watchlist ══ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="rec">
+    <!-- Recognition Watchlist -->
+    <div class="orbit-table-section lp-section">
+      <div class="lp-section__head">
+        <h2 class="lp-section__title">Recognition Watchlist</h2>
+        <span class="lp-section__rule">Productivity &ge; 110% or QA = 100.00% for 3 consecutive months</span>
+      </div>
+      <div class="orbit-table-wrap">
+        <table class="orbit-table lp-table" aria-label="Recognition watchlist">
+          <thead>
+            <tr>
+              <th class="col-associate">Associate</th>
+              <th class="col-manager">Manager</th>
+              <th>Reason</th>
+              <th>Performance Trend</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="lp-rec-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    </div><!-- /.lp-subpage[data-lp-subpage=rec] -->
+
+    <!-- ══ SUB-PAGE: Notification Center ══ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="notes">
+    <!-- Notification Center -->
+    <div class="orbit-table-section lp-section">
+      <div class="lp-section__head">
+        <h2 class="lp-section__title">Notification Center</h2>
+        <span class="lp-section__rule">Outlook-ready drafts &mdash; nothing is sent automatically</span>
+      </div>
+      <div class="lp-filters" aria-label="Notification filters">
+        <div class="lp-filters__pills" id="lp-note-pills">
+          <button class="orbit-pill is-active" data-note-reason="all" type="button">All</button>
+          <button class="orbit-pill" data-note-reason="dual" type="button">Dual Fail</button>
+          <button class="orbit-pill" data-note-reason="prod" type="button">Productivity Fail</button>
+          <button class="orbit-pill" data-note-reason="qa" type="button">QA Fail</button>
+          <button class="orbit-pill" data-note-reason="rec" type="button">Recognition</button>
+        </div>
+        <div class="orbit-filters__select-wrap">
+          <select class="orbit-select" id="lp-note-manager" aria-label="Filter notifications by manager">
+            <option value="all">All Managers</option>
+          </select>
+        </div>
+        <input class="orbit-input lp-search" id="lp-note-search" type="search"
+               placeholder="Search associate&hellip;" aria-label="Search notifications by associate" />
+      </div>
+      <div class="lp-notes" id="lp-notes"></div>
+    </div>
+    </div><!-- /.lp-subpage[data-lp-subpage=notes] -->
+
+    <!-- ══ SUB-PAGE: Performance Matrix ══ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="matrix">
+
+      <div class="orbit-table-section lp-section">
+        <div class="lp-section__head">
+          <h2 class="lp-section__title">Performance Matrix</h2>
+          <span class="lp-section__rule">Quarterly productivity vs QA — four-quadrant associate view</span>
+        </div>
+
+        <!-- Filters -->
+        <div class="mx-filters" aria-label="Performance matrix filters">
+          <div class="mx-filters__pills" id="mx-qtr-pills">
+            <button class="orbit-pill is-active" data-mx-qtr="all" type="button">All</button>
+            <button class="orbit-pill" data-mx-qtr="Q1" type="button">Q1</button>
+            <button class="orbit-pill" data-mx-qtr="Q2" type="button">Q2</button>
+            <button class="orbit-pill" data-mx-qtr="Q3" type="button">Q3</button>
+            <button class="orbit-pill" data-mx-qtr="Q4" type="button">Q4</button>
+          </div>
+          <div class="orbit-filters__select-wrap">
+            <select class="orbit-select" id="mx-year" aria-label="Filter by year">
+              <option value="all">All Years</option>
+            </select>
+          </div>
+          <div class="orbit-filters__select-wrap">
+            <select class="orbit-select" id="mx-manager" aria-label="Filter by manager">
+              <option value="all">All Managers</option>
+            </select>
+          </div>
+          <input class="orbit-input lp-search" id="mx-search" type="search"
+                 placeholder="Search associate&hellip;" aria-label="Search associate in matrix" />
+        </div>
+
+        <!-- Plot + detail panel -->
+        <div class="mx-plot-area">
+          <div id="mx-plot-wrap" role="figure" aria-label="Performance scatter plot">
+            <!-- SVG injected by JS -->
+            <div id="mx-tooltip" role="tooltip" aria-live="polite"></div>
+          </div>
+          <!-- Associate detail panel (shown on click) -->
+          <div class="mx-detail is-hidden" id="mx-detail" aria-label="Associate detail" aria-live="polite"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="mx-legend" aria-label="Matrix legend">
+          <div class="mx-legend__item"><span class="mx-legend__dot mx-legend__dot--dual"></span>Dual Pass — Top Performer</div>
+          <div class="mx-legend__item"><span class="mx-legend__dot mx-legend__dot--qa-only"></span>High QA, Low Productivity — Productivity Opportunity</div>
+          <div class="mx-legend__item"><span class="mx-legend__dot mx-legend__dot--prod-only"></span>High Productivity, Low QA — Quality Opportunity</div>
+          <div class="mx-legend__item"><span class="mx-legend__dot mx-legend__dot--none"></span>Dual Fail — Critical Attention</div>
+        </div>
+
+        <!-- Quadrant summary counts -->
+        <div class="mx-summary" aria-label="Quadrant counts">
+          <div class="mx-summary__card mx-summary__card--dual">
+            <span class="mx-summary__count" id="mx-count-dual">—</span>
+            <span class="mx-summary__label">Top Performers</span>
+            <span class="mx-summary__sub">High Prod &amp; High QA</span>
+          </div>
+          <div class="mx-summary__card mx-summary__card--qa-only">
+            <span class="mx-summary__count" id="mx-count-qa-only">—</span>
+            <span class="mx-summary__label">Productivity Opportunity</span>
+            <span class="mx-summary__sub">Low Prod, High QA</span>
+          </div>
+          <div class="mx-summary__card mx-summary__card--prod-only">
+            <span class="mx-summary__count" id="mx-count-prod-only">—</span>
+            <span class="mx-summary__label">Quality Opportunity</span>
+            <span class="mx-summary__sub">High Prod, Low QA</span>
+          </div>
+          <div class="mx-summary__card mx-summary__card--none">
+            <span class="mx-summary__count" id="mx-count-none">—</span>
+            <span class="mx-summary__label">Critical Attention</span>
+            <span class="mx-summary__sub">Low Prod &amp; Low QA</span>
+          </div>
+          <div class="mx-summary__card mx-summary__card--total">
+            <span class="mx-summary__count" id="mx-count-total">—</span>
+            <span class="mx-summary__label">Associates Plotted</span>
+            <span class="mx-summary__sub">Both axes available</span>
+          </div>
+        </div>
+
+      </div><!-- /.orbit-table-section -->
+    </div><!-- /.lp-subpage[data-lp-subpage=matrix] -->
+
+    <!-- ══ SUB-PAGE: Associate Records ══ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="ar">
+
+      <div class="orbit-table-section lp-section">
+        <div class="lp-section__head">
+          <h2 class="lp-section__title">Associate Records</h2>
+          <span class="lp-section__rule">Merit &amp; Demerit log &mdash; Leadership / Admin only &mdash; stored in ORBIT_Associate_Records.xlsx</span>
+        </div>
+
+        <!-- Filters row -->
+        <div class="lp-filters ar-filters" aria-label="Associate records filters">
+          <div class="lp-filters__pills" id="ar-type-pills">
+            <button class="orbit-pill is-active" data-ar-type="all"    type="button">All</button>
+            <button class="orbit-pill"            data-ar-type="merit"  type="button">Merits</button>
+            <button class="orbit-pill"            data-ar-type="demerit" type="button">Demerits</button>
+          </div>
+          <div class="orbit-filters__select-wrap">
+            <select class="orbit-select" id="ar-month" aria-label="Filter by month">
+              <option value="all">All Months</option>
+            </select>
+          </div>
+          <div class="orbit-filters__select-wrap">
+            <select class="orbit-select" id="ar-manager" aria-label="Filter by manager">
+              <option value="all">All Managers</option>
+            </select>
+          </div>
+          <div class="orbit-filters__select-wrap">
+            <select class="orbit-select" id="ar-category" aria-label="Filter by category">
+              <option value="all">All Categories</option>
+              <option value="Productivity">Productivity</option>
+              <option value="Quality">Quality</option>
+              <option value="Attendance">Attendance</option>
+              <option value="Recognition">Recognition</option>
+              <option value="Behavior">Behavior</option>
+              <option value="Leadership">Leadership</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <input class="orbit-input lp-search" id="ar-search" type="search"
+                 placeholder="Search associate&hellip;" aria-label="Search associate records" />
+          <!-- Add Record button — visible to admin/leadership only -->
+          <button class="orbit-btn orbit-btn--primary ar-add-btn" id="ar-add-btn" type="button"
+                  aria-haspopup="dialog">+ Add Record</button>
+        </div>
+
+        <!-- Roster table -->
+        <div class="orbit-table-wrap">
+          <table class="orbit-table lp-table ar-roster-table" id="ar-roster-table"
+                 aria-label="Associate records roster">
+            <thead>
+              <tr>
+                <th class="col-associate">Associate</th>
+                <th class="col-manager">Manager</th>
+                <th class="col-num ar-col-badge">Merits</th>
+                <th class="col-num ar-col-badge">Demerits</th>
+                <th class="ar-col-last">Last Entry</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="ar-roster-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Empty / read-only state messages -->
+        <div class="ar-readonly-banner is-hidden" id="ar-readonly-banner" role="alert">
+          <span>Read-only view &mdash; sign in with a Leadership or Admin account to add or edit records.</span>
+        </div>
+      </div><!-- /.orbit-table-section -->
+
+      <!-- ── Per-associate timeline panel (shown below roster when a row is expanded) ── -->
+      <div class="ar-timeline-panel is-hidden" id="ar-timeline-panel" aria-live="polite" aria-label="Associate record timeline">
+        <div class="ar-timeline-panel__head">
+          <div class="ar-timeline-panel__who">
+            <span class="ar-timeline-panel__name" id="ar-timeline-name"></span>
+            <span class="ar-timeline-panel__mgr"  id="ar-timeline-mgr"></span>
+          </div>
+          <div class="ar-timeline-panel__counts">
+            <span class="ar-badge ar-badge--merit"   id="ar-timeline-merits">0 Merits</span>
+            <span class="ar-badge ar-badge--demerit" id="ar-timeline-demerits">0 Demerits</span>
+          </div>
+          <button class="orbit-btn orbit-btn--ghost ar-timeline-close" id="ar-timeline-close"
+                  type="button" aria-label="Close timeline">Close</button>
+        </div>
+        <div class="ar-timeline" id="ar-timeline" role="list" aria-label="Performance record timeline"></div>
+        <div class="ar-timeline-panel__actions">
+          <button class="orbit-btn orbit-btn--primary ar-add-for-btn" id="ar-add-for-btn" type="button">
+            + Add Record for This Associate
+          </button>
+        </div>
+      </div><!-- /.ar-timeline-panel -->
+
+    </div><!-- /.lp-subpage[data-lp-subpage=ar] -->
+
+    <!-- ══ SUB-PAGE: My Notes ══════════════════════════════════════════ -->
+    <div class="lp-subpage is-hidden" data-lp-subpage="mynotes">
+
+      <!-- Header bar -->
+      <div class="mn-header">
+        <div class="mn-header__left">
+          <div class="mn-header__title">My Notes</div>
+          <div class="mn-header__sub" id="mn-header-sub">Personal leadership workspace</div>
+        </div>
+        <div class="mn-header__actions">
+          <button class="orbit-btn orbit-btn--ghost mn-export-btn" id="mn-export-btn" type="button"
+                  title="Export tasks to CSV">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1v9M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 12h12v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2z" fill="currentColor" opacity=".35"/>
+            </svg>
+            Export CSV
+          </button>
+          <button class="orbit-btn orbit-btn--primary" id="mn-add-btn" type="button">+ New Task</button>
+        </div>
+      </div>
+
+      <!-- Overdue alert banner (shown when overdue tasks exist) -->
+      <div class="mn-overdue-banner is-hidden" id="mn-overdue-banner" role="alert">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span id="mn-overdue-text">You have overdue tasks.</span>
+      </div>
+
+      <!-- Filter / sort bar -->
+      <div class="mn-filters" id="mn-filters">
+        <div class="mn-filter-group">
+          <label class="mn-filter-label" for="mn-filter-status">Status</label>
+          <select class="orbit-select mn-select" id="mn-filter-status">
+            <option value="all">All</option>
+            <option value="open">Open</option>
+            <option value="completed">Completed</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+        <div class="mn-filter-group">
+          <label class="mn-filter-label" for="mn-filter-priority">Priority</label>
+          <select class="orbit-select mn-select" id="mn-filter-priority">
+            <option value="all">All</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="mn-filter-group">
+          <label class="mn-filter-label" for="mn-search">Search</label>
+          <input class="orbit-select mn-select mn-search-input" id="mn-search"
+                 type="search" placeholder="Search tasks…" autocomplete="off" />
+        </div>
+      </div>
+
+      <!-- Task list -->
+      <div class="mn-list" id="mn-list" role="list" aria-label="My tasks">
+        <!-- Built dynamically by NOTES module -->
+      </div>
+
+      <!-- Add / Edit modal -->
+      <div class="mn-modal-backdrop is-hidden" id="mn-modal" role="dialog"
+           aria-modal="true" aria-labelledby="mn-modal-title">
+        <div class="mn-modal">
+          <div class="mn-modal__header">
+            <div class="mn-modal__title" id="mn-modal-title">New Task</div>
+            <button class="mn-modal__close" id="mn-modal-close" type="button"
+                    aria-label="Close">&times;</button>
+          </div>
+          <div class="mn-modal__body">
+
+            <div class="mn-field">
+              <label class="mn-label" for="mn-task">Task <span class="mn-req">*</span></label>
+              <input class="orbit-select mn-input mn-input--full" id="mn-task"
+                     type="text" placeholder="Describe the task…" maxlength="200" />
+            </div>
+
+            <div class="mn-field-row">
+              <div class="mn-field">
+                <label class="mn-label" for="mn-priority">Priority</label>
+                <select class="orbit-select mn-input" id="mn-priority">
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+              <div class="mn-field">
+                <label class="mn-label" for="mn-due">Due Date</label>
+                <input class="orbit-select mn-input" id="mn-due" type="date" />
+              </div>
+              <div class="mn-field" id="mn-status-field">
+                <label class="mn-label" for="mn-status">Status</label>
+                <select class="orbit-select mn-input" id="mn-status">
+                  <option value="open">Open</option>
+                  <option value="completed">Completed</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mn-field">
+              <label class="mn-label" for="mn-notes">Notes</label>
+              <textarea class="orbit-select mn-textarea" id="mn-notes"
+                        rows="4" placeholder="Additional context, links, next steps…"
+                        maxlength="2000"></textarea>
+            </div>
+
+            <!-- Audit row (edit mode only) -->
+            <div class="mn-audit-row is-hidden" id="mn-audit-row">
+              <span class="mn-audit-item">Created by <strong id="mn-audit-created-by">—</strong> on <strong id="mn-audit-created-at">—</strong></span>
+              <span class="mn-audit-sep">·</span>
+              <span class="mn-audit-item" id="mn-audit-modified-wrap">
+                Modified by <strong id="mn-audit-modified-by">—</strong> on <strong id="mn-audit-modified-at">—</strong>
+              </span>
+            </div>
+
+          </div>
+          <div class="mn-modal__footer">
+            <div class="mn-modal__footer-meta" id="mn-modal-meta"></div>
+            <div class="mn-modal__footer-actions">
+              <button class="orbit-btn orbit-btn--ghost" id="mn-modal-cancel" type="button">Cancel</button>
+              <button class="orbit-btn orbit-btn--primary" id="mn-modal-save" type="button">Save Task</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.lp-subpage[data-lp-subpage=mynotes] -->
+
+  </div><!-- /.orbit-page#page-leadership -->
+
+  <!-- ══════════════════════════════════════════════════════════
+       ORBIT FOOTER — Operational / Business Partner Branding
+       Payment Integrity  |  IGNITE  |  Clinical Tower
+       ══════════════════════════════════════════════════════════ -->
+  <footer class="orbit-footer" role="contentinfo" aria-label="Organizational branding">
+
+    <!-- Gradient divider line above footer -->
+    <div class="orbit-footer__divider" aria-hidden="true"></div>
+
+    <!-- Three-column logo row -->
+    <div class="orbit-footer__logos">
+
+      <!-- LEFT: Payment Integrity — official PNG asset -->
+      <div class="orbit-footer__brand orbit-footer__brand--left">
+        <img src="assets/logos/pi.png"
+             alt="Payment Integrity"
+             class="orbit-footer__logo-img orbit-footer__pi-img" />
+      </div>
+
+      <!-- CENTER: Payment Integrity IGNITE — official PNG asset -->
+      <div class="orbit-footer__brand orbit-footer__brand--center">
+        <img src="assets/logos/ignite.png"
+             alt="Payment Integrity IGNITE"
+             class="orbit-footer__logo-img orbit-footer__ignite-img" />
+      </div>
+
+      <!-- RIGHT: Clinical Tower — official PNG asset (original file, not recreated) -->
+      <div class="orbit-footer__brand orbit-footer__brand--right">
+        <img src="assets/logos/clinical-tower.png"
+             alt="Clinical Tower — Clinical Services &amp; Specialized Business Operations"
+             class="orbit-footer__logo-img orbit-footer__clinical-img" />
+      </div>
+
+    </div><!-- /.orbit-footer__logos -->
+
+    <!-- Tagline / attribution text -->
+    <div class="orbit-footer__tagline">
+      <span class="orbit-footer__tagline-title">PROJECT ORBIT</span>
+      <span class="orbit-footer__tagline-sep" aria-hidden="true">&nbsp;&mdash;&nbsp;</span>
+      <span class="orbit-footer__tagline-sub">Operational Results &amp; Business Intelligence Tracker</span>
+    </div>
+    <div class="orbit-footer__threshold">
+      QA Passing Threshold: <strong>98.50%</strong> &nbsp;&mdash;&nbsp; Payment Integrity Standard
+    </div>
+    <div class="orbit-footer__attr">
+      A Payment Integrity initiative &nbsp;&bull;&nbsp; powered by Payment Integrity IGNITE
+    </div>
+
+    <!-- CDC emblem — original PNG asset, bottom-most footer row -->
+    <div class="orbit-footer__cdc">
+      <img src="assets/logos/cdc-emblem.png"
+           alt="CDC emblem"
+           class="orbit-footer__cdc-img" />
+    </div>
+
+  </footer>
+
+  </main><!-- /.orbit-content -->
+</div><!-- /.orbit-shell -->
+
+<!-- Chart.js 4.4.3 — local copy; loaded here so HTML renders before JS parse begins -->
+<script src="chart.umd.min.js"></script>
+<!-- Data source — extracted from PI DI Dashboard.xlsx -->
+<script src="orbit-data.js"></script>
+<!-- Leadership sign-in dialog -->
+<div class="orbit-auth-modal is-hidden" id="orbit-auth-modal" role="dialog" aria-modal="true" aria-labelledby="orbit-auth-title">
+  <div class="orbit-auth-modal__card">
+    <div class="orbit-auth-modal__title" id="orbit-auth-title">Leadership Access</div>
+    <div class="orbit-auth-modal__sub">Enter your domain ID (e.g. AL12345). Access is granted per the ORBIT Leadership roster.</div>
+    <input class="orbit-auth-modal__input" id="orbit-auth-domain" type="text"
+           placeholder="Domain ID" autocomplete="off" spellcheck="false" />
+    <div class="orbit-auth-modal__error is-hidden" id="orbit-auth-error"></div>
+    <div class="orbit-auth-modal__actions">
+      <button class="orbit-btn orbit-btn--ghost" id="orbit-auth-cancel" type="button">Cancel</button>
+      <button class="orbit-btn orbit-btn--primary" id="orbit-auth-submit" type="button">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Record modal — Associate Records module -->
+<div class="ar-modal is-hidden" id="ar-modal" role="dialog" aria-modal="true" aria-labelledby="ar-modal-title">
+  <div class="ar-modal__card">
+    <div class="ar-modal__header">
+      <span class="ar-modal__title" id="ar-modal-title">Add Performance Record</span>
+      <button class="ar-modal__close" id="ar-modal-close" type="button" aria-label="Close dialog">&times;</button>
+    </div>
+
+    <!-- Associate selector (pre-filled when launched from PIP/Rec watchlists) -->
+    <div class="ar-modal__field">
+      <label class="ar-modal__label" for="ar-modal-assoc">Associate <span class="ar-modal__req">*</span></label>
+      <select class="orbit-select ar-modal__select" id="ar-modal-assoc" required>
+        <option value="">Select associate&hellip;</option>
+      </select>
+    </div>
+
+    <!-- Type: Merit / Demerit -->
+    <div class="ar-modal__field">
+      <label class="ar-modal__label">Type <span class="ar-modal__req">*</span></label>
+      <div class="ar-modal__radio-group" role="radiogroup" aria-label="Record type">
+        <label class="ar-modal__radio-label">
+          <input class="ar-modal__radio" type="radio" name="ar-type" value="merit" />
+          <span class="ar-badge ar-badge--merit">Merit</span>
+        </label>
+        <label class="ar-modal__radio-label">
+          <input class="ar-modal__radio" type="radio" name="ar-type" value="demerit" />
+          <span class="ar-badge ar-badge--demerit">Demerit</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Category -->
+    <div class="ar-modal__field">
+      <label class="ar-modal__label" for="ar-modal-cat">Category <span class="ar-modal__req">*</span></label>
+      <select class="orbit-select ar-modal__select" id="ar-modal-cat" required>
+        <option value="">Select category&hellip;</option>
+        <option value="Productivity">Productivity</option>
+        <option value="Quality">Quality</option>
+        <option value="Attendance">Attendance</option>
+        <option value="Recognition">Recognition</option>
+        <option value="Behavior">Behavior</option>
+        <option value="Leadership">Leadership</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <!-- Date (defaults to today) -->
+    <div class="ar-modal__field">
+      <label class="ar-modal__label" for="ar-modal-date">Date <span class="ar-modal__req">*</span></label>
+      <input class="orbit-input ar-modal__input" id="ar-modal-date" type="date" required />
+    </div>
+
+    <!-- Write-up -->
+    <div class="ar-modal__field">
+      <label class="ar-modal__label" for="ar-modal-notes">Write-Up <span class="ar-modal__req">*</span></label>
+      <textarea class="ar-modal__textarea" id="ar-modal-notes"
+                placeholder="Describe the performance event, outcome, and any supporting context&hellip;"
+                rows="5" maxlength="1000" required></textarea>
+      <span class="ar-modal__char-count" id="ar-modal-char">0 / 1000</span>
+    </div>
+
+    <!-- Audit trail (auto-filled) -->
+    <div class="ar-modal__audit-block">
+      <div class="ar-modal__field ar-modal__field--meta">
+        <span class="ar-modal__label">Created By</span>
+        <span class="ar-modal__meta-val" id="ar-modal-enteredby">&mdash;</span>
+      </div>
+      <div class="ar-modal__field ar-modal__field--meta is-hidden" id="ar-modal-modified-row">
+        <span class="ar-modal__label">Last Modified</span>
+        <span class="ar-modal__meta-val" id="ar-modal-modifiedby">&mdash;</span>
+      </div>
+    </div>
+
+    <div class="ar-modal__error is-hidden" id="ar-modal-error" role="alert"></div>
+
+    <div class="ar-modal__actions">
+      <button class="orbit-btn orbit-btn--ghost" id="ar-modal-cancel" type="button">Cancel</button>
+      <button class="orbit-btn orbit-btn--primary" id="ar-modal-save" type="button">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- Leadership roster — generated from ORBIT_Leadership.xlsx -->
+<script src="orbit-auth.js"></script>
+<!-- Application logic -->
+<script src="orbit-app.js"></script>
+
+<!-- ── Stale-copy / local-file detection ──────────────────────────────────
+     Runs after all scripts. Shows a persistent warning banner if ORBIT is
+     being opened from a local file path (file://) or any non-canonical host
+     instead of the shared SharePoint URL. Zero impact for correct users.
+
+     CONFIGURATION FLAG:
+       Set ORBIT_CONFIG.staleBannerEnabled = false  in the <head> config
+       block (search for "ORBIT_CONFIG") to suppress the banner globally,
+       e.g. during admin maintenance or localhost dev testing.
+       Default: true  (banner is shown for stale/local copies).
+──────────────────────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  // ── Admin/dev override: set to false to silence the banner site-wide ──
+  var cfg = window.ORBIT_CONFIG || {};
+  if (cfg.staleBannerEnabled === false) return;
+
+  var CANONICAL_HOST = 'mysite.wellpoint.com';
+  var CANONICAL_URL  = 'https://mysite.wellpoint.com/personal/al70683_ad_wellpoint_com/Documents/IGNITE%20PROJECTS/ORBIT/ORBIT%20DASH/ORBIT.html?web=1';
+  var proto = window.location.protocol;
+  var host  = window.location.hostname;
+
+  var isLocal      = proto === 'file:';
+  var isWrongHost  = (proto === 'http:' || proto === 'https:') && host !== CANONICAL_HOST;
+  var needsWarning = isLocal || isWrongHost;
+
+  if (!needsWarning) return;   // correct SharePoint origin -- do nothing
+
+  /* ── Build warning banner ── */
+  var reason = isLocal
+    ? 'You are viewing a <strong>local downloaded copy</strong> of ORBIT (file:// protocol). This file is static and will <strong>never update</strong>.'
+    : 'You are accessing ORBIT from <strong>' + host + '</strong>, not from the authorised SharePoint location. Data may be stale.';
+
+  var banner = document.createElement('div');
+  banner.id = 'orbit-stale-banner';
+  banner.innerHTML =
+    '<div style="display:flex;align-items:flex-start;gap:14px;max-width:900px;margin:0 auto;">'
+  + '<svg style="flex-shrink:0;margin-top:2px;" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c2d12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+  + '<div style="flex:1;">'
+  + '<strong style="display:block;margin-bottom:4px;font-size:0.95rem;">ORBIT — Stale Local Copy Detected</strong>'
+  + '<span style="font-size:0.87rem;line-height:1.55;">' + reason + ' Data shown here is <strong>not live</strong>.'
+  + ' Please close this copy and open the live application from the canonical SharePoint URL:</span>'
+  + '<a href="' + CANONICAL_URL + '" target="_blank"'
+  + '   style="display:inline-block;margin-top:10px;padding:8px 18px;background:#7c2d12;color:#fff;border-radius:7px;text-decoration:none;font-weight:600;font-size:0.85rem;">'
+  + 'Open Live ORBIT &rarr;</a>'
+  + '</div>'
+  + '<button onclick="document.getElementById(\'orbit-stale-banner\').remove()" title="Dismiss (data is still stale)"'
+  + '  style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:#7c2d12;line-height:1;padding:2px 4px;flex-shrink:0;">&times;</button>'
+  + '</div>';
+
+  var s = banner.style;
+  s.cssText = [
+    'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:99999',
+    'background:#fef2f2', 'border-bottom:2.5px solid #f87171',
+    'color:#450a0a', 'padding:14px 20px',
+    'font-family:Segoe UI,system-ui,-apple-system,sans-serif',
+    'box-shadow:0 4px 20px rgba(200,40,40,0.15)'
+  ].join(';');
+
+  /* Push page content down so banner doesn't cover the header */
+  document.body.style.marginTop = '120px';
+  document.body.insertBefore(banner, document.body.firstChild);
+
+  /* Adjust margin once banner height is known */
+  requestAnimationFrame(function () {
+    document.body.style.marginTop = (banner.offsetHeight + 4) + 'px';
+  });
+})();
+</script>
+
+</body>
+</html>
