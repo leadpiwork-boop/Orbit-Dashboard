@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 120" fill="none">
+  <defs>
+
+    <!-- Symbol gradients -->
+    <linearGradient id="lk-ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#5C00BD"/>
+      <stop offset="50%"  stop-color="#8271FA"/>
+      <stop offset="100%" stop-color="#44B8F3"/>
+    </linearGradient>
+    <linearGradient id="lk-orbitGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#44B8F3"/>
+      <stop offset="50%"  stop-color="#8271FA"/>
+      <stop offset="100%" stop-color="#5C00BD"/>
+    </linearGradient>
+    <radialGradient id="lk-sphereGrad" cx="38%" cy="32%" r="62%">
+      <stop offset="0%"   stop-color="#9B6EF5"/>
+      <stop offset="45%"  stop-color="#6A1FD4"/>
+      <stop offset="100%" stop-color="#3A0080"/>
+    </radialGradient>
+    <linearGradient id="lk-barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#00BCBB"/>
+      <stop offset="100%" stop-color="#44B8F3"/>
+    </linearGradient>
+    <linearGradient id="lk-tealArc" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#44B8F3"/>
+      <stop offset="100%" stop-color="#00BCBB"/>
+    </linearGradient>
+
+    <!-- Text gradients -->
+    <linearGradient id="lk-titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#8271FA"/>
+    </linearGradient>
+
+    <!-- Divider line gradient -->
+    <linearGradient id="lk-divGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#8271FA" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#8271FA" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#44B8F3" stop-opacity="0"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- ════════════════════════════════════════════════════
+       SYMBOL  (scaled 0.52× from 200×200 viewBox → ~104px)
+       Centered vertically in 120px height → translate(8, 8)
+       ════════════════════════════════════════════════════ -->
+  <g transform="translate(8,8) scale(0.52)">
+
+    <!-- Outer ring -->
+    <path d="M 100 8 A 92 92 0 1 1 30 162"
+          stroke="url(#lk-ringGrad)" stroke-width="13" stroke-linecap="round" fill="none" opacity="0.92"/>
+    <!-- Teal lower arc -->
+    <path d="M 30 162 A 92 92 0 0 0 172 155"
+          stroke="url(#lk-tealArc)" stroke-width="13" stroke-linecap="round" fill="none" opacity="0.95"/>
+    <!-- Dashed cyan inner arc -->
+    <path d="M 100 22 A 78 78 0 0 1 168 130"
+          stroke="#44B8F3" stroke-width="5" stroke-linecap="round"
+          stroke-dasharray="9 7" fill="none" opacity="0.85"/>
+    <!-- Dashed purple lower arc -->
+    <path d="M 35 148 A 78 78 0 0 1 100 22"
+          stroke="#8271FA" stroke-width="4" stroke-linecap="round"
+          stroke-dasharray="7 9" fill="none" opacity="0.55"/>
+    <!-- Orbital ring ellipse -->
+    <ellipse cx="100" cy="108" rx="80" ry="22"
+             transform="rotate(-30 100 108)"
+             stroke="url(#lk-orbitGrad)" stroke-width="5" fill="none" opacity="0.88"/>
+    <!-- Planet -->
+    <circle cx="100" cy="100" r="30" fill="url(#lk-sphereGrad)"/>
+    <ellipse cx="91" cy="89" rx="9" ry="6"
+             fill="white" opacity="0.18" transform="rotate(-20 91 89)"/>
+    <!-- Node dot -->
+    <circle cx="158" cy="80" r="8" fill="#5C00BD"/>
+    <circle cx="158" cy="80" r="5" fill="#8271FA"/>
+    <circle cx="156" cy="78" r="2" fill="white" opacity="0.5"/>
+    <!-- Bars -->
+    <rect x="108" y="148" width="9"  height="18" rx="2" fill="url(#lk-barGrad)" opacity="0.95"/>
+    <rect x="120" y="138" width="9"  height="28" rx="2" fill="url(#lk-barGrad)" opacity="0.95"/>
+    <rect x="132" y="128" width="9"  height="38" rx="2" fill="url(#lk-barGrad)" opacity="0.95"/>
+    <rect x="144" y="116" width="9"  height="50" rx="2" fill="url(#lk-barGrad)" opacity="0.95"/>
+    <!-- Bar sheens -->
+    <rect x="108" y="148" width="4"  height="18" rx="2" fill="white" opacity="0.12"/>
+    <rect x="120" y="138" width="4"  height="28" rx="2" fill="white" opacity="0.12"/>
+    <rect x="132" y="128" width="4"  height="38" rx="2" fill="white" opacity="0.12"/>
+    <rect x="144" y="116" width="4"  height="50" rx="2" fill="white" opacity="0.12"/>
+
+  </g>
+
+  <!-- ════════════════════════════════════════════════════
+       DIVIDER
+       ════════════════════════════════════════════════════ -->
+  <rect x="120" y="16" width="1.5" height="88" fill="url(#lk-divGrad)" rx="1"/>
+
+  <!-- ════════════════════════════════════════════════════
+       TEXT LOCKUP
+       ════════════════════════════════════════════════════ -->
+
+  <!-- "PROJECT" small caps label -->
+  <text x="136" y="46"
+        font-family="'Segoe UI', 'Inter', 'Arial', sans-serif"
+        font-size="11" font-weight="500" letter-spacing="5"
+        fill="#8271FA" text-anchor="start" opacity="0.9">PROJECT</text>
+
+  <!-- "ORBIT" main title with gradient -->
+  <text x="134" y="78"
+        font-family="'Segoe UI', 'Inter', 'Arial', sans-serif"
+        font-size="38" font-weight="800" letter-spacing="3"
+        fill="url(#lk-titleGrad)" text-anchor="start">ORBIT</text>
+
+  <!-- Subtitle — full expansion -->
+  <text x="136" y="97"
+        font-family="'Segoe UI', 'Inter', 'Arial', sans-serif"
+        font-size="9" font-weight="400" letter-spacing="2.2"
+        fill="#94A3B8" text-anchor="start" opacity="0.85">OPERATIONAL RESULTS &amp; BUSINESS INTELLIGENCE TRACKER</text>
+
+</svg>

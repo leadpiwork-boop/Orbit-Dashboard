@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+
+    <!-- Outer ring gradient: deep purple → sky blue -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#5C00BD"/>
+      <stop offset="50%"  stop-color="#8271FA"/>
+      <stop offset="100%" stop-color="#44B8F3"/>
+    </linearGradient>
+
+    <!-- Orbital sweep / ring gradient -->
+    <linearGradient id="orbitGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#44B8F3"/>
+      <stop offset="50%"  stop-color="#8271FA"/>
+      <stop offset="100%" stop-color="#5C00BD"/>
+    </linearGradient>
+
+    <!-- Planet sphere gradient: top-left highlight -->
+    <radialGradient id="sphereGrad" cx="38%" cy="32%" r="62%">
+      <stop offset="0%"   stop-color="#9B6EF5"/>
+      <stop offset="45%"  stop-color="#6A1FD4"/>
+      <stop offset="100%" stop-color="#3A0080"/>
+    </radialGradient>
+
+    <!-- Bar chart gradient: teal → sky blue -->
+    <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#00BCBB"/>
+      <stop offset="100%" stop-color="#44B8F3"/>
+    </linearGradient>
+
+    <!-- Teal arc gradient -->
+    <linearGradient id="tealArc" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#44B8F3"/>
+      <stop offset="100%" stop-color="#00BCBB"/>
+    </linearGradient>
+
+    <!-- Clip to circle for cleanliness -->
+    <clipPath id="circleClip">
+      <circle cx="100" cy="100" r="96"/>
+    </clipPath>
+
+  </defs>
+
+  <!-- ── OUTER RING (main orbit arc, thick) ──────────────────── -->
+  <!-- Top-left arc segment: thick purple-blue ring, ~270° -->
+  <path d="M 100 8
+            A 92 92 0 1 1 30 162"
+        stroke="url(#ringGrad)" stroke-width="13" stroke-linecap="round"
+        fill="none" opacity="0.92"/>
+
+  <!-- ── TEAL LOWER ARC (bottom right, thicker, teal-blue) ───── -->
+  <path d="M 30 162
+            A 92 92 0 0 0 172 155"
+        stroke="url(#tealArc)" stroke-width="13" stroke-linecap="round"
+        fill="none" opacity="0.95"/>
+
+  <!-- ── DASHED SPEEDOMETER ARC (inner upper) ─────────────────── -->
+  <!-- Cyan dashed arc inside top of ring, offset inward ~20px -->
+  <path d="M 100 22
+            A 78 78 0 0 1 168 130"
+        stroke="#44B8F3" stroke-width="5" stroke-linecap="round"
+        stroke-dasharray="9 7"
+        fill="none" opacity="0.85"/>
+
+  <!-- ── DASHED LOWER-LEFT ARC (purple dashes) ────────────────── -->
+  <path d="M 35 148
+            A 78 78 0 0 1 100 22"
+        stroke="#8271FA" stroke-width="4" stroke-linecap="round"
+        stroke-dasharray="7 9"
+        fill="none" opacity="0.55"/>
+
+  <!-- ── ORBITAL RING (diagonal ellipse across planet) ───────── -->
+  <!-- Tilted ellipse sweeping from lower-left to upper-right -->
+  <ellipse cx="100" cy="108" rx="80" ry="22"
+           transform="rotate(-30 100 108)"
+           stroke="url(#orbitGrad)" stroke-width="5"
+           fill="none" opacity="0.88"/>
+
+  <!-- ── PLANET SPHERE ─────────────────────────────────────────── -->
+  <circle cx="100" cy="100" r="30" fill="url(#sphereGrad)"/>
+  <!-- Subtle specular highlight -->
+  <ellipse cx="91" cy="89" rx="9" ry="6"
+           fill="white" opacity="0.18" transform="rotate(-20 91 89)"/>
+
+  <!-- ── ORBITAL NODE DOT (right end of ring) ──────────────────── -->
+  <circle cx="158" cy="80" r="8" fill="#5C00BD"/>
+  <circle cx="158" cy="80" r="5" fill="#8271FA"/>
+  <circle cx="156" cy="78" r="2" fill="white" opacity="0.5"/>
+
+  <!-- ── BAR CHART (lower right, inside ring) ──────────────────── -->
+  <!-- 4 ascending bars, teal-blue gradient, rounded tops -->
+  <rect x="108" y="148" width="9"  height="18" rx="2" fill="url(#barGrad)" opacity="0.95"/>
+  <rect x="120" y="138" width="9"  height="28" rx="2" fill="url(#barGrad)" opacity="0.95"/>
+  <rect x="132" y="128" width="9"  height="38" rx="2" fill="url(#barGrad)" opacity="0.95"/>
+  <rect x="144" y="116" width="9"  height="50" rx="2" fill="url(#barGrad)" opacity="0.95"/>
+
+  <!-- Subtle bar reflection / sheen -->
+  <rect x="108" y="148" width="4"  height="18" rx="2" fill="white" opacity="0.12"/>
+  <rect x="120" y="138" width="4"  height="28" rx="2" fill="white" opacity="0.12"/>
+  <rect x="132" y="128" width="4"  height="38" rx="2" fill="white" opacity="0.12"/>
+  <rect x="144" y="116" width="4"  height="50" rx="2" fill="white" opacity="0.12"/>
+
+</svg>
